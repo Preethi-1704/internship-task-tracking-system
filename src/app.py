@@ -5,7 +5,7 @@ import plotly.express as px
 from pathlib import Path
 from datetime import date
 from io import BytesIO
-from config.settings import LOGO
+from settings import LOGO
 from database.connection import init_db, connect
 from services.core import (
     authenticate, hash_password, seed, tasks, deadlines, save_intern,
