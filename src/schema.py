@@ -1,0 +1,11 @@
+SCHEMA='''
+CREATE TABLE IF NOT EXISTS users(username TEXT PRIMARY KEY,password_hash TEXT NOT NULL,role TEXT NOT NULL,intern_id TEXT,team_id TEXT,active INTEGER DEFAULT 1);
+CREATE TABLE IF NOT EXISTS teams(team_id TEXT PRIMARY KEY,team_name TEXT NOT NULL,lead_username TEXT,active INTEGER DEFAULT 1);
+CREATE TABLE IF NOT EXISTS interns(intern_id TEXT PRIMARY KEY,full_name TEXT NOT NULL,email TEXT UNIQUE NOT NULL,phone TEXT,team_id TEXT NOT NULL,start_date TEXT NOT NULL,end_date TEXT NOT NULL,active INTEGER DEFAULT 1,demo_record INTEGER DEFAULT 0,FOREIGN KEY(team_id) REFERENCES teams(team_id));
+CREATE TABLE IF NOT EXISTS tasks(task_id TEXT PRIMARY KEY,title TEXT NOT NULL,description TEXT,intern_id TEXT NOT NULL,team_id TEXT NOT NULL,assigned_date TEXT NOT NULL,due_date TEXT NOT NULL,submission_date TEXT,status TEXT NOT NULL DEFAULT 'Not Started',assessment_status TEXT NOT NULL DEFAULT 'Pending',priority TEXT NOT NULL DEFAULT 'Medium',reviewer_comments TEXT,assigned_by TEXT,reviewed_by TEXT,demo_record INTEGER DEFAULT 0,FOREIGN KEY(intern_id) REFERENCES interns(intern_id),FOREIGN KEY(team_id) REFERENCES teams(team_id));
+CREATE TABLE IF NOT EXISTS attendance(attendance_id INTEGER PRIMARY KEY,intern_id TEXT NOT NULL,attendance_date TEXT NOT NULL,status TEXT NOT NULL,check_in TEXT,check_out TEXT,remarks TEXT,recorded_by TEXT,demo_record INTEGER DEFAULT 0,UNIQUE(intern_id,attendance_date),FOREIGN KEY(intern_id) REFERENCES interns(intern_id));
+CREATE TABLE IF NOT EXISTS reviews(review_id INTEGER PRIMARY KEY,task_id TEXT NOT NULL,reviewer TEXT,assessment_status TEXT,comments TEXT,reviewed_at TEXT DEFAULT CURRENT_TIMESTAMP,FOREIGN KEY(task_id) REFERENCES tasks(task_id));
+CREATE TABLE IF NOT EXISTS notifications(notification_id INTEGER PRIMARY KEY,recipient TEXT,task_id TEXT,kind TEXT,message TEXT,channel TEXT DEFAULT 'in_app',delivery_status TEXT DEFAULT 'pending',reason TEXT,created_at TEXT DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE IF NOT EXISTS audit_logs(audit_id INTEGER PRIMARY KEY,username TEXT,operation TEXT,entity_type TEXT,entity_id TEXT,outcome TEXT,details TEXT,created_at TEXT DEFAULT CURRENT_TIMESTAMP);
+CREATE INDEX IF NOT EXISTS tasks_due_idx ON tasks(due_date,status);
+'''
